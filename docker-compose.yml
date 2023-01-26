@@ -1,0 +1,28 @@
+volumes:
+  test-vol:
+
+services:
+  pgsql:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: todos
+    volumes:
+      - test-vol:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  python:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    depends_on:
+      - pgsql
+    ports:
+      - 5000:5000
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_ENV=development
